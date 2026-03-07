@@ -1,0 +1,13 @@
+# Plants and flowers only.
+base_path: "patterns/corpora/data"
+
+noun_lists:
+  - output_path: "/users/aganesh8/data/aganesh8/data/patterns/word_lists/plants_nouns.txt"
+    sources:
+      - file: "plants/flowers.json"
+        strategy: list_of_strings
+        key: flowers
+      - file: "plants/plants.json"
+        strategy: list_of_objects
+        key: plants
+        item_key: name

@@ -1,0 +1,22 @@
+# Tile generation config. Seed = seed_base + --rank.
+# Paths
+image_dir: "/users/aganesh8/data/aganesh8/data/patterns/generative_tiles/animals/"
+metadata_dir: "/users/aganesh8/data/aganesh8/data/patterns/metadata"
+word_list_path: "/users/aganesh8/data/aganesh8/data/patterns/word_lists/animals_nouns.txt"
+ldcli_path: "/users/aganesh8/data/aganesh8/projects/patterns/LayerDiffuse_DiffusersCLI"
+
+# Generation
+n_tiles: 1000
+n_prompts: 2
+replace_prompt_every: 3
+n_per_concept: 2
+n_diffusion_steps: 30
+guidance_scale: 7.0
+seed_base: 4210
+
+# Filtering (white/black pixel ratio thresholds)
+white_lim: 245
+black_lim: 10
+
+# Model
+sdxl_name: "SG161222/RealVisXL_V4.0"

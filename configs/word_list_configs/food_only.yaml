@@ -1,0 +1,61 @@
+# Food only (all food files).
+base_path: "patterns/corpora/data"
+
+noun_lists:
+  - output_path: "/users/aganesh8/data/aganesh8/data/patterns/word_lists/food_nouns.txt"
+    sources:
+      - file: "foods/apple_cultivars.json"
+        strategy: list_of_strings
+        key: cultivars
+      - file: "foods/breads_and_pastries.json"
+        strategy: list_of_strings
+        key: breads
+      - file: "foods/condiments.json"
+        strategy: list_of_strings
+        key: condiments
+      - file: "foods/curds.json"
+        strategy: list_of_strings
+        key: curds
+      - file: "foods/fish.json"
+        strategy: list_of_strings
+        key: fish
+      - file: "foods/fruits.json"
+        strategy: list_of_strings
+        key: fruits
+      - file: "foods/herbs_n_spices.json"
+        strategy: list_of_strings
+        key: herbs
+      - file: "foods/vegetables.json"
+        strategy: list_of_strings
+        key: vegetables
+      - file: "foods/shellfish.json"
+        strategy: list_of_strings
+        key: fish
+      - file: "foods/poultry.json"
+        strategy: list_of_strings
+        key: bird
+      - file: "foods/ham.json"
+        strategy: list_of_strings
+        key: meat
+      - file: "foods/sausages.json"
+        strategy: list_of_strings
+        key: sausages
+      - file: "foods/sandwiches.json"
+        strategy: list_of_objects
+        key: sandwiches
+        item_key: name
+      - file: "foods/hot_peppers.json"
+        strategy: list_of_strings
+        key: "C. annuum var. annuum"
+      - file: "foods/tea.json"
+        strategy: list_of_strings
+        key: teas
+      - file: "foods/pizzaToppings.json"
+        strategy: list_of_strings
+        key: pizzaToppings
+      - file: "foods/menuItems.json"
+        strategy: list_of_strings
+        key: menuItems
+      - file: "foods/iba_cocktails.json"
+        strategy: list_of_strings
+        key: cocktails

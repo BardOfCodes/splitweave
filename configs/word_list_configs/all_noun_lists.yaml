@@ -1,0 +1,231 @@
+# All categories combined into one noun list.
+# Used by scripts that need word lists (e.g. generate_tiles.py). Adjust base_path for your corpora clone.
+
+base_path: "corpora/data"
+noun_lists:
+  - output_path: "/users/aganesh8/data/aganesh8/data/patterns/word_lists/all_nouns.txt"
+    sources:
+      # 1. Animals
+      - file: "animals/cats.json"
+        strategy: list_of_strings
+        key: cats
+      - file: "animals/common.json"
+        strategy: list_of_strings
+        key: animals
+      - file: "animals/dinosaurs.json"
+        strategy: list_of_strings
+        key: dinosaurs
+      - file: "animals/dogs.json"
+        strategy: list_of_strings
+        key: dogs
+      - file: "animals/horses.json"
+        strategy: list_of_strings
+        key: horses
+      - file: "animals/rabbits.json"
+        strategy: list_of_strings
+        key: rabbits
+      - file: "animals/mainly-ducks.json"
+        strategy: list_of_strings
+        key: ducks
+      - file: "animals/dogs-en-de.json"
+        strategy: root_array
+        item_key: name
+      # 2. Archetypes
+      - file: "archetypes/setting.json"
+        strategy: list_of_objects
+        key: settings
+        item_key: name
+      # 3. Corporations
+      - file: "corporations/cars.json"
+        strategy: list_of_strings
+        key: cars
+      - file: "corporations/fortune500.json"
+        strategy: list_of_strings
+        key: companies
+      - file: "corporations/industries.json"
+        strategy: list_of_strings
+        key: industries
+      - file: "corporations/newspapers.json"
+        strategy: list_of_strings
+        key: newspapers
+      # 4. Food (all)
+      - file: "foods/apple_cultivars.json"
+        strategy: list_of_strings
+        key: cultivars
+      - file: "foods/breads_and_pastries.json"
+        strategy: list_of_strings
+        key: breads
+      - file: "foods/condiments.json"
+        strategy: list_of_strings
+        key: condiments
+      - file: "foods/curds.json"
+        strategy: list_of_strings
+        key: curds
+      - file: "foods/fish.json"
+        strategy: list_of_strings
+        key: fish
+      - file: "foods/fruits.json"
+        strategy: list_of_strings
+        key: fruits
+      - file: "foods/herbs_n_spices.json"
+        strategy: list_of_strings
+        key: herbs
+      - file: "foods/vegetables.json"
+        strategy: list_of_strings
+        key: vegetables
+      - file: "foods/shellfish.json"
+        strategy: list_of_strings
+        key: fish
+      - file: "foods/poultry.json"
+        strategy: list_of_strings
+        key: bird
+      - file: "foods/ham.json"
+        strategy: list_of_strings
+        key: meat
+      - file: "foods/sausages.json"
+        strategy: list_of_strings
+        key: sausages
+      - file: "foods/sandwiches.json"
+        strategy: list_of_objects
+        key: sandwiches
+        item_key: name
+      - file: "foods/hot_peppers.json"
+        strategy: list_of_strings
+        key: "C. annuum var. annuum"
+      - file: "foods/tea.json"
+        strategy: list_of_strings
+        key: teas
+      - file: "foods/pizzaToppings.json"
+        strategy: list_of_strings
+        key: pizzaToppings
+      - file: "foods/menuItems.json"
+        strategy: list_of_strings
+        key: menuItems
+      - file: "foods/iba_cocktails.json"
+        strategy: list_of_strings
+        key: cocktails
+      # 5. Humans
+      - file: "humans/britishActors.json"
+        strategy: list_of_strings
+        key: britishActors
+      - file: "humans/richpeople.json"
+        strategy: list_of_objects
+        key: richPeople
+        item_key: name
+      - file: "humans/us_presidents.json"
+        strategy: list_of_objects
+        key: objects
+        item_key: person.name
+      - file: "humans/wrestlers.json"
+        strategy: list_of_strings
+        key: wrestlers
+      # 6. Materials
+      - file: "materials/decorative-stones.json"
+        strategy: list_of_strings
+        key: "decorative stones"
+      - file: "materials/fabrics.json"
+        strategy: list_of_strings
+        key: fabrics
+      - file: "materials/fictional-materials.json"
+        strategy: list_of_strings
+        key: "fictional materials"
+      - file: "materials/gemstones.json"
+        strategy: list_of_strings
+        key: gemstones
+      - file: "materials/metals.json"
+        strategy: list_of_strings
+        key: metals
+      # 7. Music
+      - file: "music/instruments.json"
+        strategy: list_of_strings
+        key: instruments
+      - file: "music/rock_hall_of_fame.json"
+        strategy: list_of_objects
+        key: artists
+        item_key: name
+      # 8. Mythology (all)
+      - file: "mythology/greek_gods.json"
+        strategy: list_of_strings
+        key: greek_gods
+      - file: "mythology/egyptian_gods.json"
+        strategy: object_keys
+        key: egyptian_gods
+      - file: "mythology/norse_gods.json"
+        strategy: list_of_strings
+        key: norse_deities.gods
+      - file: "mythology/norse_gods.json"
+        strategy: list_of_strings
+        key: norse_deities.goddesses
+      - file: "mythology/greek_monsters.json"
+        strategy: list_of_strings
+        key: greek_monsters
+      - file: "mythology/monsters.json"
+        strategy: list_of_strings
+        key: names
+      - file: "mythology/lovecraft.json"
+        strategy: list_of_strings
+        key: deities
+      - file: "mythology/roman_deities.json"
+        strategy: list_of_strings
+        key: roman_deities
+      - file: "mythology/greek_titans.json"
+        strategy: list_of_strings
+        key: greek_titans
+      - file: "mythology/hebrew_god.json"
+        strategy: list_of_objects
+        key: names
+        item_key: name
+      # 9. Objects
+      - file: "objects/objects.json"
+        strategy: list_of_strings
+        key: objects
+      - file: "objects/premodern_weapons.json"
+        strategy: list_of_strings
+        key: data.melee
+      - file: "objects/premodern_weapons.json"
+        strategy: list_of_strings
+        key: data.ranged
+      # 10. Plants
+      - file: "plants/flowers.json"
+        strategy: list_of_strings
+        key: flowers
+      - file: "plants/plants.json"
+        strategy: list_of_objects
+        key: plants
+        item_key: name
+      # 11. Science
+      - file: "science/planets.json"
+        strategy: list_of_objects
+        key: planets
+        item_key: name
+      - file: "science/toxic_chemicals.json"
+        strategy: list_of_strings
+        key: chemicals
+      # 12. Societies - fraternities (professional), sororities
+      - file: "societies_and_groups/fraternities/professional.json"
+        strategy: object_values_list_of_objects
+        item_key: name
+      - file: "societies_and_groups/fraternities/sororities.json"
+        strategy: root_array
+        item_key: name
+      - file: "societies_and_groups/fraternities/fraternities.json"
+        strategy: root_array
+        item_key: name
+      # 13. Sports
+      - file: "sports/sports.json"
+        strategy: list_of_strings
+        key: sports
+      # 14. Technology
+      - file: "technology/appliances.json"
+        strategy: list_of_strings
+        key: appliances
+      - file: "technology/guns_n_rifles.json"
+        strategy: list_of_strings
+        key: weapons
+      # 15. Words
+      - file: "words/nouns.json"
+        strategy: list_of_strings
+        key: nouns
+      - file: "words/common.json"
+        strategy: list_of_strings
+        key: commonWords

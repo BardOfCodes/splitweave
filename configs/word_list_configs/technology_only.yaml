@@ -1,0 +1,12 @@
+# Technology only (appliances, guns_n_rifles).
+base_path: "patterns/corpora/data"
+
+noun_lists:
+  - output_path: "/users/aganesh8/data/aganesh8/data/patterns/word_lists/technology_nouns.txt"
+    sources:
+      - file: "technology/appliances.json"
+        strategy: list_of_strings
+        key: appliances
+      - file: "technology/guns_n_rifles.json"
+        strategy: list_of_strings
+        key: weapons

@@ -1,0 +1,10 @@
+# Core dependencies for splitweave (also declared in pyproject.toml).
+# Install: pip install -r requirements.txt && pip install -e .
+# For development (tests, lint): pip install -e ".[dev]"
+
+numpy>=1.23
+sympy>=1.12
+torch>=2.0
+yacs>=0.1.8
+Pillow>=9.0
+geolipi>=0.1.0

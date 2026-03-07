@@ -1,0 +1,30 @@
+# Animals only.
+base_path: "patterns/corpora/data"
+
+noun_lists:
+  - output_path: "/users/aganesh8/data/aganesh8/data/patterns/word_lists/animals_nouns.txt"
+    sources:
+      - file: "animals/cats.json"
+        strategy: list_of_strings
+        key: cats
+      - file: "animals/common.json"
+        strategy: list_of_strings
+        key: animals
+      - file: "animals/dinosaurs.json"
+        strategy: list_of_strings
+        key: dinosaurs
+      - file: "animals/dogs.json"
+        strategy: list_of_strings
+        key: dogs
+      - file: "animals/horses.json"
+        strategy: list_of_strings
+        key: horses
+      - file: "animals/rabbits.json"
+        strategy: list_of_strings
+        key: rabbits
+      - file: "animals/mainly-ducks.json"
+        strategy: list_of_strings
+        key: ducks
+      - file: "animals/dogs-en-de.json"
+        strategy: root_array
+        item_key: name
