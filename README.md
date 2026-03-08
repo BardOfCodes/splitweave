@@ -11,6 +11,13 @@ This repository builds on [GeoLIPI](https://github.com/BardOfCodes/geolipi).
   <img src="assets/hero.jpg" alt="SySL Rendering Examples">
 </p>
 
+#### Quick Notes: 
+
+1. The language was mostly designed for sampling synthetic patterns. Therefore the design is not very user friendly. 
+
+2. I plan to add a compiler to convert the pattern expressions into GLSL shader code. Then we can potentially evaluate expressions without GPUs :).
+
+3. I used Claude Code to refactor the code base from the earlier version used for the paper submission. Please contact me (adityaganeshan@gmail.com) know if you need the original codebase. 
 
 ## What can you do with SplitWeave
 
@@ -27,7 +34,7 @@ import splitweave.symbolic as sws
 import geolipi.symbolic as gls
 import geolipi.symbolic.primitives_2d as prim2d
 from geolipi.torch_compute import Sketcher
-from splitweave.torch_compute import grid_eval, evaluate_pattern
+from splitweave.torch_compute import evaluate_pattern
 RES = 512
 DEVICE = "cuda" if th.cuda.is_available() else "cpu"
 # Create sketcher to evaluate the expression
@@ -60,6 +67,7 @@ cellfx_tile = sws.ApplyCellRecolor(tile_expr,
 bg_color = th.tensor([0.95, 0.92, 0.85, 1.0], device=DEVICE)
 bg = sws.ConstantBackground(bg_color)
 root = gls.SourceOver(cellfx_tile, bg)
+canvas, grid_ids = evaluate_pattern(root, sketcher, aa=2)
 ```
 
 The `canvas` tensor has shape `[H*W, 4]` (RGBA). To visualise or save:
@@ -67,17 +75,22 @@ The `canvas` tensor has shape `[H*W, 4]` (RGBA). To visualise or save:
 ```python
 
 #Evaluate the expression
-canvas, grid_ids = evaluate_pattern(root, sketcher, aa=2)
 canvas = canvas.reshape(RES, RES, 4).cpu().numpy()
 canvas = (canvas * 255).astype(np.uint8)
 image = Image.fromarray(canvas)
 image.save("output.png")
 ```
-![image](assets/manual_pattern_0.png)
+
+
+<p align="center">
+  <img src="assets/manual_pattern_0.png" alt="Manual Pattern">
+</p>
 
 ### 2. Generate Pattern Animations.
 
 ```python
+# Extend imports from previous code snippets. 
+
 def get_scaled_expr(tile, scale, translate):
 
     layout = sws.CartesianGrid()
@@ -129,7 +142,12 @@ frames_to_animation(images,
     format="gif",
     mp4_quality="high")
 ```
-![image](assets/pattern_animation.gif)
+
+
+<p align="center">
+  <img src="assets/pattern_animation.gif" alt="Pattern Animation">
+</p>
+
 
 
 ### 3. Generate random Motif Tiling & Region Splitting Patterns.
@@ -138,9 +156,13 @@ frames_to_animation(images,
 
 ```python
 import numpy as np
+import torch as th
+from PIL import Image
+from geolipi.torch_compute import Sketcher
 from splitweave.pattern_gen.mtp_main import sample_mtp_pattern
 from splitweave.cfg_to_sw.parser import mtp_config_to_expr, load_tile_tensors_from_config
 from splitweave.utils.tiles import get_tile_content
+from splitweave.torch_compute import evaluate_pattern
 
 # Fixed seed for reproducible random patterns
 np.random.seed(9)
@@ -168,15 +190,16 @@ image = Image.fromarray(canvas)
 
 Here are random samples from the MTP Generator. 
 
-![mpt_gens](assets/mtp_examples.png)
+<p align="center">
+  <img src="assets/mtp_examples.png" alt="MTP Patterns">
+</p>
 
 #### RSP: Region Splitting Patterns
 
 ```python
-import numpy as np
-from splitweave.pattern_gen.mtp_main import sample_mtp_pattern
+# Extend imports from previous
 from splitweave.pattern_gen.rsp_main import sample_rsp_pattern
-from splitweave.cfg_to_sw.parser import rsp_config_to_expr, load_tile_tensors_from_config
+from splitweave.cfg_to_sw.parser import rsp_config_to_expr
 from splitweave.utils.tiles import get_tile_content
 
 # Fixed seed for reproducible random patterns
@@ -203,24 +226,49 @@ image = Image.fromarray(canvas)
 
 Here are random samples from the RSP Generator. 
 
-![rsp_gens](assets/rsp_examples.png)
-
+<p align="center">
+  <img src="assets/rsp_examples.png" alt="RSP Patterns">
+</p>
 ### 4. Generate analogical quartets.
 
 ```python
+# Analogy Sampler
 import numpy as np
-from splitweave.analogy_gen.rsp_analogies import rsp_replace_layout, rsp_replace_coloring
+import torch as th
+from PIL import Image
+from geolipi.torch_compute import Sketcher
+from splitweave.utils.tiles import get_tile_content
 from splitweave.analogy_gen.mtp_layout_analogies import full_layout_change
+from splitweave.cfg_to_sw.parser import mtp_config_to_expr, load_tile_tensors_from_config
+from splitweave.torch_compute import evaluate_pattern
 
-np.random.seed(123)
+TILE_DIR = "../assets/tiles/"
 
-# RSP quartet: A, B share layout; A*, B* get a new shared layout
-quartet = rsp_replace_layout()
-# quartet["patterns_a"], quartet["patterns_b"], quartet["patterns_a_star"], quartet["patterns_b_star"]
+RES = 1024
+MID_RES = 256
+DEVICE = "cuda" if th.cuda.is_available() else "cpu"
+KEYS = ['patterns_a', 'patterns_b', 'patterns_a_star', 'patterns_b_star',]
+# Create sketcher to evaluate the expression
+sketcher = Sketcher(device=DEVICE, resolution=RES, n_dims=2)
 
-# MTP quartet: change layout across all four (requires filenames, filename_to_indices)
-# quartet = full_layout_change(filenames, filename_to_indices)
+filenames, filename_to_indices = get_tile_content(TILE_DIR, mode=None)
+analogy_output = full_layout_change(filenames, filename_to_indices)
+images = {}
+for key in KEYS:
+    cur_cfg = analogy_output[key][0]
+    tile_tensors = load_tile_tensors_from_config(cur_cfg.tile_cfg, TILE_DIR, device=DEVICE)
+    expr = mtp_config_to_expr(cur_cfg, tile_tensors=tile_tensors, device=DEVICE)
+    canvas, grid_ids = evaluate_pattern(expr.tensor(), sketcher, aa=2)
+    canvas = canvas.reshape(RES, RES, 4).cpu().numpy()
+    canvas = canvas[MID_RES:-MID_RES, MID_RES:-MID_RES]
+    canvas = (canvas * 255).astype(np.uint8)
+    image = Image.fromarray(canvas)
+    images[key] = image
 ```
+| RSP Analogy | MTP Analogy |
+|:-:|:-:|
+| ![RSP Analogy](assets/rsp_analogy.png) | ![MTP Analogy](assets/mtp_analogy.png) |
+
 ### 5. Generate MTP pattern tiles
 
 Tile generation uses [LayerDiffuse](https://github.com/lllyasviel/LayerDiffuse) and requires installing it separately (not included in splitweave's pip dependencies). Use `scripts/generate_tiles.py` to generate tile images via LayerDiffuse + SDXL. Here are some examples: 
@@ -248,9 +296,26 @@ python scripts/generate_tiles.py --config configs/tile_gen/default.yaml
 ```
 
 
-### 5. Use the ASMBLR interface for Analogically editing pattern Images. 
+### 6. Use the ASMBLR interface for Analogically editing pattern Images. 
 
 TBD.
+
+### Generate Analogical Quartet Training data: 
+
+1. Create tiles. 
+```python
+python scripts/generate_tiles.py --config configs/tile_gen/default.yaml 
+```
+Adapt the script to generate over many different prompts. We generated 100_000 synthetic tiles for our experiments. 
+
+2. Create analogical quartets. 
+
+```bash
+# python scripts/generate_analogical_quartets.py --tile_dir <path-to-tiles> --out_dir <path-to-save-imgs> 
+python scripts/generate_analogical_quartets.py --tile_dir assets/tiles/ --out_dir  assets/synth_analogy/ --n_pats 10  --verbose
+```
+
+
 
 ## Installation
 

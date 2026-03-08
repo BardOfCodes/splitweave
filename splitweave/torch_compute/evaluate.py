@@ -49,6 +49,19 @@ else:
 # Internal helpers for pattern evaluation
 # ============================================================
 
+def _layout_has_sdf_ring_partition(expr) -> bool:
+    """Check whether the layout expression tree contains an SDFRingPartition node."""
+    if isinstance(expr, sws.SDFRingPartition):
+        return True
+    if hasattr(expr, "args"):
+        return any(
+            _layout_has_sdf_ring_partition(a)
+            for a in expr.args
+            if isinstance(a, (gls.GLExpr, gls.GLFunction))
+        )
+    return False
+
+
 def _reduce_grid_ids(grid_ids: th.Tensor, id_reduce: str, mod_k: Optional[int] = None) -> th.Tensor:
     """Collapse multi-dimensional grid_ids to 1D for RSP color assignment."""
     if id_reduce == "x":
@@ -363,10 +376,7 @@ def _eval_border_effect(expr, sketcher: Sketcher):
 
 @rec_eval_pattern_expr.register(sws.SolidColorFill)
 def _eval_solid_color_fill(expr: sws.SolidColorFill, sketcher: Sketcher):
-    """Evaluate SolidColorFill: layout -> grid_ids -> palette colors.
-    Pixels with negative grid_ids (e.g. from SDFRingPartition outside region)
-    are left transparent (alpha=0).
-    """
+    """Evaluate SolidColorFill: layout -> grid_ids -> palette colors."""
     layout_expr = expr.get_arg(0)
     grid, grid_ids = grid_eval(layout_expr, sketcher)
     id_reduce = str(expr.get_arg(3)) if len(expr.args) > 3 else "none"
@@ -378,9 +388,14 @@ def _eval_solid_color_fill(expr: sws.SolidColorFill, sketcher: Sketcher):
     device = grid.device
     n = grid.shape[0]
 
-    colored_canvas = th.zeros(n, 4, device=device, dtype=th.float32)
+    has_sdf_ring = _layout_has_sdf_ring_partition(layout_expr)
+    if has_sdf_ring:
+        colored_canvas = th.zeros(n, 4, device=device, dtype=th.float32)
+    else:
+        colored_canvas = th.ones(n, 4, device=device, dtype=th.float32)
+
     raw_ids = grid_ids[..., 0]
-    valid = raw_ids >= 0
+    valid = raw_ids >= 0 if has_sdf_ring else None
     condition = (raw_ids.long() % n_colors)
     for i in range(n_colors):
         c = palette[i] if i < len(palette) else palette[0]
@@ -390,7 +405,9 @@ def _eval_solid_color_fill(expr: sws.SolidColorFill, sketcher: Sketcher):
             c = c.to(device)
         if c.dim() == 0 or c.numel() == 3:
             c = th.cat([c.view(-1), th.ones(1, device=device)], dim=-1)
-        mask = (condition == i) & valid
+        mask = (condition == i)
+        if valid is not None:
+            mask = mask & valid
         colored_canvas = th.where(mask[..., None], c.expand_as(colored_canvas), colored_canvas)
     return colored_canvas, grid_ids
 
