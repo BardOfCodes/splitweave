@@ -1,7 +1,9 @@
 """
 SplitWeave: A DSL for 2D pattern programs.
 
-Used for synthetic pattern generation and analogical quartets (Pattern Analogy project).
+Provides a unified symbolic language for Multi-Tile Patterns (MTP)
+and Random Split Patterns (RSP), used for synthetic pattern generation
+and analogical quartets (Pattern Analogy project, CVPR 2025).
 """
 
 from importlib.metadata import PackageNotFoundError, version
@@ -26,14 +28,18 @@ from .torch_compute import (
     rec_eval_pattern_expr,
     sws_to_fn_mapper,
 )
-from .cfg_to_sw.parser import mtp_config_to_expr
-from .cfg_to_sw.evaluate import evaluate_pattern_cfg
+
+# Config -> expression -> pattern
+from .cfg_to_sw.parser import mtp_config_to_expr, rsp_config_to_expr
+from .cfg_to_sw.evaluate import evaluate_pattern_cfg, evaluate_rsp_cfg
 
 __all__ = [
     "__version__",
+    # subpackages
     "symbolic",
     "torch_compute",
     "cfg_to_sw",
+    # evaluation
     "grid_eval",
     "rec_grid_eval",
     "aa_eval",
@@ -41,6 +47,9 @@ __all__ = [
     "evaluate_pattern_expr",
     "rec_eval_pattern_expr",
     "sws_to_fn_mapper",
+    # config-to-expression
     "mtp_config_to_expr",
+    "rsp_config_to_expr",
     "evaluate_pattern_cfg",
+    "evaluate_rsp_cfg",
 ]
